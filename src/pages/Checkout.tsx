@@ -21,7 +21,7 @@ const Checkout = () => {
     return null;
   }
 
-  const handlePaymentSuccess = () => {
+  const handlePaymentSuccess = (cardInfo: any) => {
     setIsProcessing(true);
     
     // Simulate payment processing
@@ -32,8 +32,22 @@ const Checkout = () => {
         duration: 5000,
       });
       
+      // Generate order data
+      const orderData = {
+        orderNumber: `KAM-${Math.floor(100000 + Math.random() * 900000)}`,
+        date: new Date().toLocaleDateString(),
+        lastFourDigits: cardInfo.cardNumber.slice(-4),
+        totalAmount: getCartTotal() + 1500, // Including shipping
+        items: items.map(item => ({
+          id: item.product.id,
+          name: item.product.name,
+          price: item.product.price,
+          quantity: item.quantity
+        }))
+      };
+      
       clearCart();
-      navigate("/");
+      navigate("/order-confirmation", { state: { orderData } });
       setIsProcessing(false);
     }, 2000);
   };

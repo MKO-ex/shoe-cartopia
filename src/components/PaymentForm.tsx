@@ -35,7 +35,7 @@ const formSchema = z.object({
 
 interface PaymentFormProps {
   total: number;
-  onPaymentSuccess: () => void;
+  onPaymentSuccess: (cardInfo: any) => void;
   isProcessing: boolean;
 }
 
@@ -59,7 +59,7 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
     // Simulate payment processing
     setTimeout(() => {
       setIsSubmitting(false);
-      onPaymentSuccess();
+      onPaymentSuccess(values);
     }, 1500);
   };
 
