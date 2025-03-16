@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from 'react';
 import { useCart } from '@/context/CartContext';
 import CartItem from './CartItem';
@@ -6,12 +5,14 @@ import { formatPrice } from '@/lib/products';
 import { ShoppingBag, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
   const { state, toggleCart, getCartTotal, clearCart } = useCart();
   const { isOpen, items } = state;
   const cartRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,13 +45,8 @@ const Cart = () => {
   }, [isOpen, toggleCart]);
 
   const handleCheckout = () => {
-    toast({
-      title: "Order placed!",
-      description: "Your order has been placed successfully.",
-      duration: 3000,
-    });
-    clearCart();
     toggleCart(false);
+    navigate('/checkout');
   };
 
   const isCartEmpty = items.length === 0;
