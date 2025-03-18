@@ -8,16 +8,15 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { useToast } from '@/components/ui/use-toast';
 
 const FirebaseConfig = () => {
-  const { toast } = useToast();
-  const [config, setConfig] = useState({
-    apiKey: firebaseConfig.apiKey,
-    authDomain: firebaseConfig.authDomain,
-    projectId: firebaseConfig.projectId,
-    storageBucket: firebaseConfig.storageBucket,
-    messagingSenderId: firebaseConfig.messagingSenderId,
-    appId: firebaseConfig.appId,
-    measurementId: firebaseConfig.measurementId,
-  });
+  const firebaseConfig = {
+  apiKey: "AIzaSyC51boYofHOPsTetwz9AhbULKfYFXQyNSI",
+  authDomain: "kam-shoes-9bff4.firebaseapp.com",
+  projectId: "kam-shoes-9bff4",
+  storageBucket: "kam-shoes-9bff4.firebasestorage.app",
+  messagingSenderId: "1040539363232",
+  appId: "1:1040539363232:web:9c0d013cdbe904a66c66c5",
+  measurementId: "G-Q5JP5RB7CF"
+};
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
