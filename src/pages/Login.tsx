@@ -12,18 +12,25 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState('');
   const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError('');
     
     try {
       const result = await login(email, password);
       if (result.success) {
+        // Successfully logged in, navigate without showing toast
         navigate('/');
+      } else if (result.error) {
+        setError(result.error.message || 'Failed to login');
       }
+    } catch (err) {
+      setError('An unexpected error occurred');
     } finally {
       setIsLoading(false);
     }
@@ -40,6 +47,11 @@ const Login = () => {
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
+            {error && (
+              <div className="p-3 bg-red-100 border border-red-400 text-red-700 rounded">
+                {error}
+              </div>
+            )}
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
