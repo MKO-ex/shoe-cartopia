@@ -1,11 +1,15 @@
 
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/context/CartContext';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { ShoppingBag, Menu, X, User, LogIn } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const Navbar = () => {
   const { getCartCount, toggleCart } = useCart();
+  const { currentUser } = useAuth();
+  const navigate = useNavigate();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -31,6 +35,11 @@ const Navbar = () => {
         behavior: 'smooth'
       });
     }
+  };
+
+  const handleNavigation = (path: string) => {
+    setMobileMenuOpen(false);
+    navigate(path);
   };
 
   return (
@@ -86,6 +95,24 @@ const Navbar = () => {
         </nav>
         
         <div className="flex items-center space-x-4">
+          {currentUser ? (
+            <button 
+              onClick={() => handleNavigation('/profile')}
+              className="text-white hover:bg-white/20 rounded-full transition-colors p-2"
+              aria-label="Profile"
+            >
+              <User size={24} />
+            </button>
+          ) : (
+            <button 
+              onClick={() => handleNavigation('/login')}
+              className="text-white hover:bg-white/20 rounded-full transition-colors p-2"
+              aria-label="Login"
+            >
+              <LogIn size={24} />
+            </button>
+          )}
+          
           <button 
             onClick={() => toggleCart(true)}
             className="relative text-white p-2 hover:bg-white/20 rounded-full transition-colors"
@@ -113,7 +140,7 @@ const Navbar = () => {
       <div 
         className={cn(
           "md:hidden absolute top-full left-0 w-full bg-kam-blue/95 backdrop-blur-md shadow-md transition-all duration-300 overflow-hidden",
-          mobileMenuOpen ? "max-h-[300px] py-4" : "max-h-0"
+          mobileMenuOpen ? "max-h-[400px] py-4" : "max-h-0"
         )}
       >
         <nav className="container mx-auto px-6">
@@ -150,6 +177,35 @@ const Navbar = () => {
                 Contact Us
               </button>
             </li>
+            {currentUser ? (
+              <li>
+                <button
+                  onClick={() => handleNavigation('/profile')}
+                  className="text-white hover:text-kam-dark-blue transition-colors font-medium block w-full text-left py-2"
+                >
+                  My Profile
+                </button>
+              </li>
+            ) : (
+              <>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('/login')}
+                    className="text-white hover:text-kam-dark-blue transition-colors font-medium block w-full text-left py-2"
+                  >
+                    Login
+                  </button>
+                </li>
+                <li>
+                  <button
+                    onClick={() => handleNavigation('/register')}
+                    className="text-white hover:text-kam-dark-blue transition-colors font-medium block w-full text-left py-2"
+                  >
+                    Register
+                  </button>
+                </li>
+              </>
+            )}
           </ul>
         </nav>
       </div>

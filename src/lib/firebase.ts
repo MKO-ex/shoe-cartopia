@@ -13,7 +13,7 @@ export const firebaseConfig = {
 
 // Initialize Firebase
 import { initializeApp } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, User } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Initialize Firebase app
@@ -22,5 +22,33 @@ const app = initializeApp(firebaseConfig);
 // Initialize Firebase services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
+// Authentication functions
+export const loginUser = async (email: string, password: string) => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return { user: userCredential.user, error: null };
+  } catch (error) {
+    return { user: null, error };
+  }
+};
+
+export const registerUser = async (email: string, password: string) => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    return { user: userCredential.user, error: null };
+  } catch (error) {
+    return { user: null, error };
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    await signOut(auth);
+    return { success: true, error: null };
+  } catch (error) {
+    return { success: false, error };
+  }
+};
 
 export default app;
