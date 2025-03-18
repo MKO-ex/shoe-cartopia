@@ -65,6 +65,8 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                inputMode="text"
+                pattern=".*"
               />
             </div>
           </CardContent>

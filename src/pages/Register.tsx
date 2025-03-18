@@ -80,6 +80,8 @@ const Register = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                inputMode="text"
+                pattern=".*"
               />
             </div>
             <div className="space-y-2">
@@ -91,6 +93,8 @@ const Register = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
+                inputMode="text"
+                pattern=".*"
               />
               {passwordError && (
                 <p className="text-sm text-destructive">{passwordError}</p>
