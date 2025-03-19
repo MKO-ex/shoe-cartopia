@@ -1,6 +1,5 @@
-
 import { motion } from 'framer-motion';
-import { Loader } from 'lucide-react';
+import { ShoppingBag } from 'lucide-react';
 
 const Footer = () => {
   return (
@@ -15,7 +14,7 @@ const Footer = () => {
         >
           <div className="md:col-span-2">
             <h2 className="text-2xl font-bold mb-4 flex items-center">
-              <Loader className="mr-2 h-6 w-6 animate-spin" /> KAM Shoes
+              <ShoppingBag className="mr-2 h-6 w-6" /> KAM Shoes
             </h2>
             <p className="mb-4 max-w-md text-white/80">
               Dedicated to providing high-quality, stylish, and comfortable footwear. 
