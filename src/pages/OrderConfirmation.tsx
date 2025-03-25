@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Check, Package } from "lucide-react";
+import { ArrowLeft, Check, Package, Mail, Phone } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 
 const OrderConfirmation = () => {
@@ -56,6 +56,24 @@ const OrderConfirmation = () => {
               <span className="font-semibold">Payment Method:</span>
               <span>Credit Card (•••• {orderData.lastFourDigits})</span>
             </div>
+            {orderData.email && (
+              <div className="flex justify-between mb-4">
+                <span className="font-semibold">Email:</span>
+                <span className="flex items-center">
+                  <Mail size={16} className="mr-2 text-kam-blue" />
+                  {orderData.email}
+                </span>
+              </div>
+            )}
+            {orderData.phone && (
+              <div className="flex justify-between mb-4">
+                <span className="font-semibold">Phone:</span>
+                <span className="flex items-center">
+                  <Phone size={16} className="mr-2 text-kam-blue" />
+                  {orderData.phone}
+                </span>
+              </div>
+            )}
             <div className="flex justify-between font-semibold">
               <span>Total Amount:</span>
               <span>{formatPrice(orderData.totalAmount)}</span>

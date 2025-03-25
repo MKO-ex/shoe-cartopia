@@ -38,6 +38,8 @@ const Checkout = () => {
         date: new Date().toLocaleDateString(),
         lastFourDigits: cardInfo.cardNumber.slice(-4),
         totalAmount: getCartTotal() + 1500, // Including shipping
+        email: cardInfo.email,
+        phone: cardInfo.phone,
         items: items.map(item => ({
           id: item.product.id,
           name: item.product.name,

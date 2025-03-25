@@ -18,6 +18,8 @@ import { CreditCard, CheckCircle } from "lucide-react";
 // Payment form schema
 const formSchema = z.object({
   cardName: z.string().min(3, { message: "Name must be at least 3 characters." }),
+  email: z.string().email({ message: "Please enter a valid email address." }),
+  phone: z.string().min(10, { message: "Phone number must be at least 10 digits." }),
   cardNumber: z
     .string()
     .min(16, { message: "Card number must be 16 digits." })
@@ -46,6 +48,8 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
     resolver: zodResolver(formSchema),
     defaultValues: {
       cardName: "",
+      email: "",
+      phone: "",
       cardNumber: "",
       expiryDate: "",
       cvv: "",
@@ -92,6 +96,12 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
     return v;
   };
 
+  // Format phone number
+  const formatPhoneNumber = (value: string) => {
+    const v = value.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    return v;
+  };
+
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
@@ -106,6 +116,44 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
                 <FormLabel>Cardholder Name</FormLabel>
                 <FormControl>
                   <Input placeholder="John Doe" {...field} disabled={isProcessing} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email Address</FormLabel>
+                <FormControl>
+                  <Input 
+                    type="email"
+                    placeholder="your.email@example.com" 
+                    {...field}
+                    disabled={isProcessing} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          
+          <FormField
+            control={form.control}
+            name="phone"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Phone Number</FormLabel>
+                <FormControl>
+                  <Input 
+                    placeholder="0123456789" 
+                    value={field.value}
+                    onChange={(e) => field.onChange(formatPhoneNumber(e.target.value))}
+                    disabled={isProcessing}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
