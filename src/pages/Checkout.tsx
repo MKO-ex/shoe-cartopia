@@ -2,12 +2,20 @@
 import { useState } from "react";
 import { useCart } from "@/context/CartContext";
 import { useNavigate } from "react-router-dom";
-import { formatPrice } from "@/lib/products";
 import { useToast } from "@/components/ui/use-toast";
 import PaymentForm from "@/components/PaymentForm";
 import OrderSummary from "@/components/OrderSummary";
 import { ArrowLeft } from "lucide-react";
 import ShippingAddressForm, { ShippingAddressData } from "@/components/ShippingAddressForm";
+
+// Array of countries for display
+export const countries = [
+  { value: "ng", label: "Nigeria" },
+  { value: "us", label: "United States" },
+  { value: "ca", label: "Canada" },
+  { value: "gb", label: "United Kingdom" },
+  { value: "au", label: "Australia" },
+];
 
 const Checkout = () => {
   const { state, getCartTotal, clearCart } = useCart();
@@ -86,21 +94,10 @@ const Checkout = () => {
           {/* Form Section */}
           <div className="bg-white rounded-lg shadow-md p-6">
             {currentStep === "shipping" ? (
-              <>
-                <ShippingAddressForm 
-                  onAddressSubmit={handleAddressSubmit}
-                  isSubmitting={isProcessing}
-                />
-                <div className="pt-4">
-                  <button
-                    onClick={form => form.handleSubmit(handleAddressSubmit)}
-                    disabled={isProcessing}
-                    className="w-full bg-kam-blue hover:bg-kam-dark-blue text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
-                  >
-                    Continue to Payment
-                  </button>
-                </div>
-              </>
+              <ShippingAddressForm 
+                onAddressSubmit={handleAddressSubmit}
+                isSubmitting={isProcessing}
+              />
             ) : (
               <>
                 <div className="mb-6">
@@ -136,14 +133,5 @@ const Checkout = () => {
     </div>
   );
 };
-
-// Array of countries for display
-const countries = [
-  { value: "ng", label: "Nigeria" },
-  { value: "us", label: "United States" },
-  { value: "ca", label: "Canada" },
-  { value: "gb", label: "United Kingdom" },
-  { value: "au", label: "Australia" },
-];
 
 export default Checkout;
