@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import { ArrowLeft, Check, Package, Mail, Phone } from "lucide-react";
+import { ArrowLeft, Check, Package, Mail, Phone, MapPin } from "lucide-react";
 import { formatPrice } from "@/lib/products";
 
 const OrderConfirmation = () => {
@@ -19,6 +19,18 @@ const OrderConfirmation = () => {
   if (!orderData) {
     return null;
   }
+
+  // Find the country label
+  const getCountryLabel = (countryCode: string) => {
+    const countries = [
+      { value: "ng", label: "Nigeria" },
+      { value: "us", label: "United States" },
+      { value: "ca", label: "Canada" },
+      { value: "gb", label: "United Kingdom" },
+      { value: "au", label: "Australia" },
+    ];
+    return countries.find(c => c.value === countryCode)?.label || countryCode;
+  };
 
   return (
     <div className="min-h-screen bg-kam-light-blue py-12">
@@ -79,6 +91,26 @@ const OrderConfirmation = () => {
               <span>{formatPrice(orderData.totalAmount)}</span>
             </div>
           </div>
+
+          {orderData.shippingAddress && (
+            <div className="mb-6 border-b pb-4">
+              <h2 className="text-xl font-semibold mb-3">Shipping Address</h2>
+              <div className="bg-gray-50 p-4 rounded-lg">
+                <div className="flex items-start">
+                  <MapPin className="h-5 w-5 text-kam-blue mr-2 mt-0.5" />
+                  <div>
+                    <p className="font-medium">{orderData.shippingAddress.fullName}</p>
+                    <p>{orderData.shippingAddress.addressLine1}</p>
+                    {orderData.shippingAddress.addressLine2 && <p>{orderData.shippingAddress.addressLine2}</p>}
+                    <p>
+                      {orderData.shippingAddress.city}, {orderData.shippingAddress.state} {orderData.shippingAddress.zipCode}
+                    </p>
+                    <p>{getCountryLabel(orderData.shippingAddress.country)}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div className="mb-8">
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>

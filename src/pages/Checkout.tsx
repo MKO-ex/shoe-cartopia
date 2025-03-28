@@ -7,11 +7,14 @@ import { useToast } from "@/components/ui/use-toast";
 import PaymentForm from "@/components/PaymentForm";
 import OrderSummary from "@/components/OrderSummary";
 import { ArrowLeft } from "lucide-react";
+import ShippingAddressForm, { ShippingAddressData } from "@/components/ShippingAddressForm";
 
 const Checkout = () => {
   const { state, getCartTotal, clearCart } = useCart();
   const { items } = state;
   const [isProcessing, setIsProcessing] = useState(false);
+  const [currentStep, setCurrentStep] = useState<"shipping" | "payment">("shipping");
+  const [shippingAddress, setShippingAddress] = useState<ShippingAddressData | null>(null);
   const navigate = useNavigate();
   const { toast } = useToast();
 
@@ -20,6 +23,11 @@ const Checkout = () => {
     navigate("/");
     return null;
   }
+
+  const handleAddressSubmit = (addressData: ShippingAddressData) => {
+    setShippingAddress(addressData);
+    setCurrentStep("payment");
+  };
 
   const handlePaymentSuccess = (cardInfo: any) => {
     setIsProcessing(true);
@@ -40,6 +48,7 @@ const Checkout = () => {
         totalAmount: getCartTotal() + 1500, // Including shipping
         email: cardInfo.email,
         phone: cardInfo.phone,
+        shippingAddress: shippingAddress,
         items: items.map(item => ({
           id: item.product.id,
           name: item.product.name,
@@ -74,18 +83,67 @@ const Checkout = () => {
             <OrderSummary />
           </div>
           
-          {/* Payment Form */}
+          {/* Form Section */}
           <div className="bg-white rounded-lg shadow-md p-6">
-            <PaymentForm 
-              total={getCartTotal()} 
-              onPaymentSuccess={handlePaymentSuccess}
-              isProcessing={isProcessing}
-            />
+            {currentStep === "shipping" ? (
+              <>
+                <ShippingAddressForm 
+                  onAddressSubmit={handleAddressSubmit}
+                  isSubmitting={isProcessing}
+                />
+                <div className="pt-4">
+                  <button
+                    onClick={form => form.handleSubmit(handleAddressSubmit)}
+                    disabled={isProcessing}
+                    className="w-full bg-kam-blue hover:bg-kam-dark-blue text-white py-3 px-4 rounded-md font-medium transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                  >
+                    Continue to Payment
+                  </button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="mb-6">
+                  <h3 className="font-medium mb-2">Shipping Address:</h3>
+                  <div className="bg-gray-50 p-3 rounded-md">
+                    <p>{shippingAddress?.fullName}</p>
+                    <p>{shippingAddress?.addressLine1}</p>
+                    {shippingAddress?.addressLine2 && <p>{shippingAddress.addressLine2}</p>}
+                    <p>
+                      {shippingAddress?.city}, {shippingAddress?.state} {shippingAddress?.zipCode}
+                    </p>
+                    <p>
+                      {countries.find(c => c.value === shippingAddress?.country)?.label}
+                    </p>
+                  </div>
+                  <button 
+                    onClick={() => setCurrentStep("shipping")}
+                    className="text-kam-blue hover:text-kam-dark-blue text-sm mt-2"
+                  >
+                    Edit
+                  </button>
+                </div>
+                <PaymentForm 
+                  total={getCartTotal()} 
+                  onPaymentSuccess={handlePaymentSuccess}
+                  isProcessing={isProcessing}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>
     </div>
   );
 };
+
+// Array of countries for display
+const countries = [
+  { value: "ng", label: "Nigeria" },
+  { value: "us", label: "United States" },
+  { value: "ca", label: "Canada" },
+  { value: "gb", label: "United Kingdom" },
+  { value: "au", label: "Australia" },
+];
 
 export default Checkout;
