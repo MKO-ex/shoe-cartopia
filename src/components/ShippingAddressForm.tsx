@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 // Shipping address form schema
 const formSchema = z.object({
@@ -230,6 +231,23 @@ const ShippingAddressForm = ({ onAddressSubmit, isSubmitting }: ShippingAddressF
               </FormItem>
             )}
           />
+          
+          <div className="pt-6">
+            <Button 
+              type="submit" 
+              disabled={isSubmitting}
+              className="w-full bg-kam-blue hover:bg-kam-dark-blue text-white"
+            >
+              {isSubmitting ? (
+                <div className="flex items-center">
+                  <div className="animate-spin mr-2 h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></div>
+                  Processing...
+                </div>
+              ) : (
+                "Proceed to Payment"
+              )}
+            </Button>
+          </div>
           
           <div className="mt-4 text-center text-sm text-gray-500">
             <p className="flex items-center justify-center">
