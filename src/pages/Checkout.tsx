@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/components/ui/use-toast";
 import PaymentForm from "@/components/PaymentForm";
 import OrderSummary from "@/components/OrderSummary";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CheckCircle } from "lucide-react";
 import ShippingAddressForm, { ShippingAddressData } from "@/components/ShippingAddressForm";
 
 // Array of countries for display
@@ -35,15 +35,18 @@ const Checkout = () => {
   const handleAddressSubmit = (addressData: ShippingAddressData) => {
     setShippingAddress(addressData);
     setCurrentStep("payment");
+    
+    // Scroll to top when changing steps
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePaymentSuccess = (cardInfo: any) => {
     setIsProcessing(true);
     
-    // Simulate payment processing
+    // Simulate payment gateway processing
     setTimeout(() => {
       toast({
-        title: "Payment successful!",
+        title: "Payment successful! 🎉",
         description: "Your order has been placed and will be processed soon.",
         duration: 5000,
       });
@@ -84,6 +87,25 @@ const Checkout = () => {
         </button>
 
         <h1 className="text-3xl font-bold mb-8 text-center">Checkout</h1>
+        
+        {/* Checkout progress */}
+        <div className="mb-8">
+          <div className="flex justify-center items-center">
+            <div className={`flex flex-col items-center ${currentStep === "shipping" ? "text-kam-blue font-medium" : "text-gray-500"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${currentStep === "shipping" ? "bg-kam-blue text-white" : "bg-gray-200 text-gray-600"}`}>
+                1
+              </div>
+              <span className="text-sm">Shipping</span>
+            </div>
+            <div className={`w-16 h-0.5 ${currentStep === "shipping" ? "bg-gray-200" : "bg-kam-blue"} mx-1`}></div>
+            <div className={`flex flex-col items-center ${currentStep === "payment" ? "text-kam-blue font-medium" : "text-gray-500"}`}>
+              <div className={`w-8 h-8 rounded-full flex items-center justify-center mb-1 ${currentStep === "payment" ? "bg-kam-blue text-white" : "bg-gray-200 text-gray-600"}`}>
+                {currentStep === "payment" ? <CheckCircle className="h-4 w-4" /> : "2"}
+              </div>
+              <span className="text-sm">Payment</span>
+            </div>
+          </div>
+        </div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Order Summary */}

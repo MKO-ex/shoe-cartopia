@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { formatPrice } from "@/lib/products";
-import { CreditCard, CheckCircle } from "lucide-react";
+import { CreditCard, CheckCircle, Shield, Lock } from "lucide-react";
 
 // Payment form schema
 const formSchema = z.object({
@@ -43,6 +43,7 @@ interface PaymentFormProps {
 
 const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [cardType, setCardType] = useState<string>("");
   
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -60,11 +61,28 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
     console.log("Payment details:", values);
     setIsSubmitting(true);
     
-    // Simulate payment processing
+    // Simulate payment gateway processing
     setTimeout(() => {
       setIsSubmitting(false);
       onPaymentSuccess(values);
     }, 1500);
+  };
+
+  // Detect card type based on first digits
+  const detectCardType = (number: string) => {
+    const cleanNumber = number.replace(/\s+/g, "").replace(/[^0-9]/gi, "");
+    
+    if (cleanNumber.startsWith('4')) {
+      return 'visa';
+    } else if (/^5[1-5]/.test(cleanNumber)) {
+      return 'mastercard';
+    } else if (/^3[47]/.test(cleanNumber)) {
+      return 'amex';
+    } else if (/^6(?:011|5)/.test(cleanNumber)) {
+      return 'discover';
+    } else {
+      return '';
+    }
   };
 
   // Format card number with spaces
@@ -78,11 +96,11 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
       parts.push(match.substring(i, i + 4));
     }
 
-    if (parts.length) {
-      return parts.join(" ");
-    } else {
-      return value;
-    }
+    const formattedValue = parts.length ? parts.join(" ") : value;
+    const detectedType = detectCardType(formattedValue);
+    setCardType(detectedType);
+    
+    return formattedValue;
   };
 
   // Format expiry date
@@ -105,6 +123,20 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
   return (
     <div>
       <h2 className="text-xl font-semibold mb-4">Payment Details</h2>
+      
+      <div className="mb-6 p-3 bg-kam-light-blue rounded-md flex items-center">
+        <Shield className="text-kam-blue mr-2" size={18} />
+        <p className="text-sm">This payment is securely processed by our payment provider.</p>
+      </div>
+      
+      <div className="flex justify-between items-center mb-4">
+        <span className="text-sm text-gray-500">Accepted Cards</span>
+        <div className="flex space-x-2">
+          <div className="h-6 w-10 bg-gray-100 rounded flex items-center justify-center text-[10px] font-medium">VISA</div>
+          <div className="h-6 w-10 bg-gray-100 rounded flex items-center justify-center text-[10px] font-medium">MC</div>
+          <div className="h-6 w-10 bg-gray-100 rounded flex items-center justify-center text-[10px] font-medium">AMEX</div>
+        </div>
+      </div>
       
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -167,13 +199,21 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
               <FormItem>
                 <FormLabel>Card Number</FormLabel>
                 <FormControl>
-                  <Input 
-                    placeholder="1234 5678 9012 3456" 
-                    value={field.value}
-                    onChange={(e) => field.onChange(formatCardNumber(e.target.value))}
-                    maxLength={19}
-                    disabled={isProcessing}
-                  />
+                  <div className="relative">
+                    <Input 
+                      placeholder="1234 5678 9012 3456" 
+                      value={field.value}
+                      onChange={(e) => field.onChange(formatCardNumber(e.target.value))}
+                      maxLength={19}
+                      disabled={isProcessing}
+                      className="pr-10"
+                    />
+                    {cardType && (
+                      <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-xs font-bold">
+                        {cardType.toUpperCase()}
+                      </div>
+                    )}
+                  </div>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -208,12 +248,16 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
                 <FormItem>
                   <FormLabel>CVV</FormLabel>
                   <FormControl>
-                    <Input 
-                      placeholder="123" 
-                      maxLength={4}
-                      {...field}
-                      disabled={isProcessing}
-                    />
+                    <div className="relative">
+                      <Input 
+                        placeholder="123" 
+                        maxLength={4}
+                        {...field}
+                        disabled={isProcessing}
+                        className="pr-10"
+                      />
+                      <Lock className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -230,7 +274,7 @@ const PaymentForm = ({ total, onPaymentSuccess, isProcessing }: PaymentFormProps
               {isSubmitting || isProcessing ? (
                 <>
                   <div className="animate-spin mr-2 h-4 w-4 border-2 border-white/30 border-t-white rounded-full"></div>
-                  Processing...
+                  Processing Payment...
                 </>
               ) : (
                 <>
